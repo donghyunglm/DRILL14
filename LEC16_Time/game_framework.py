@@ -47,6 +47,8 @@ def run(start_mode):
             current_time = new_time
 
             stack[-1].handle_events()
+            if not running:
+                break
             stack[-1].update()
             stack[-1].render()
 

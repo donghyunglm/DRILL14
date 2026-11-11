@@ -1,4 +1,4 @@
-﻿# Drill #14 — 새의 비행 애니메이션
+# Drill #14 — 새의 비행 애니메이션
 
 실행: 프로젝트 루트에서 `python Drill14/drill14.py`
 

@@ -1,3 +1,4 @@
+import random
 from pathlib import Path
 
 from pico2d import *
@@ -17,10 +18,11 @@ class Bird:
     def __init__(self):
         if Bird.image is None:
             Bird.image = load_image(str(Path(__file__).with_name('bird_animation.png')))
-        self.x, self.y = CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2
-        self.frame = 0.0
-        self.dir = 1
-        self.speed = FLY_SPEED_PPS
+        self.x = random.uniform(BIRD_WIDTH / 2, CANVAS_WIDTH - BIRD_WIDTH / 2)
+        self.y = random.uniform(BIRD_HEIGHT / 2, CANVAS_HEIGHT - BIRD_HEIGHT / 2)
+        self.frame = random.uniform(0, FRAME_COUNT)
+        self.dir = random.choice((-1, 1))
+        self.speed = FLY_SPEED_PPS * random.uniform(0.8, 1.2)
 
     def update(self, frame_time):
         self.frame = (self.frame + FRAMES_PER_SECOND * frame_time) % FRAME_COUNT
@@ -61,7 +63,7 @@ class Bird:
 def main():
     open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
-        bird = Bird()
+        birds = [Bird() for _ in range(10)]
         running = True
         current_time = get_time()
         while running:
@@ -75,9 +77,11 @@ def main():
                     running = False
             if not running:
                 break
-            bird.update(frame_time)
+            for bird in birds:
+                bird.update(frame_time)
             clear_canvas()
-            bird.draw()
+            for bird in birds:
+                bird.draw()
             update_canvas()
             delay(0.01)
     finally:

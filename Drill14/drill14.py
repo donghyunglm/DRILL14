@@ -1,8 +1,11 @@
-﻿from pathlib import Path
+from pathlib import Path
 
 from pico2d import *
 
 CANVAS_WIDTH, CANVAS_HEIGHT = 1600, 600
+FRAME_COUNT = 14
+FRAMES_PER_SECOND = FRAME_COUNT / 0.7
+BIRD_WIDTH, BIRD_HEIGHT = 100, 92
 
 
 class Bird:
@@ -12,12 +15,22 @@ class Bird:
         if Bird.image is None:
             Bird.image = load_image(str(Path(__file__).with_name('bird_animation.png')))
         self.x, self.y = CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2
+        self.frame = 0.0
 
     def update(self, frame_time):
-        pass
+        self.frame = (self.frame + FRAMES_PER_SECOND * frame_time) % FRAME_COUNT
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        # Source: 918 x 506, 5 columns x 3 rows, last cell empty.
+        # Read left to right, top to bottom; pico2d clips from the bottom.
+        row, column = divmod(int(self.frame), 5)
+        left = round(column * self.image.w / 5)
+        right = round((column + 1) * self.image.w / 5)
+        top = round(row * self.image.h / 3)
+        bottom = round((row + 1) * self.image.h / 3)
+        self.image.clip_draw(left, self.image.h - bottom,
+                             right - left, bottom - top,
+                             self.x, self.y, BIRD_WIDTH, BIRD_HEIGHT)
 
 
 def main():
